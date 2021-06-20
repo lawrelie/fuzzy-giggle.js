@@ -1,0 +1,8 @@
+[submodule "src/lawrelie/vigilant-fiesta.css"]
+	path = src/lawrelie/vigilant-fiesta.css
+	url = https://github.com/lawrelie/vigilant-fiesta.css
+	branch = main
+[submodule "src/lawrelie/friendly-octo-dollop.css"]
+	path = src/lawrelie/friendly-octo-dollop.css
+	url = https://github.com/lawrelie/friendly-octo-dollop.css
+	branch = main

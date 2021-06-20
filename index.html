@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>fuzzy-giggle.js</title>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Lexend+Giga&family=Noto+Sans+JP&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="src/lawrelie/vigilant-fiesta.css/vigilant-fiesta.css">
+        <link rel="stylesheet" href="src/lawrelie/friendly-octo-dollop.css/friendly-octo-dollop.css">
+        <meta name="author" content="lawrelie">
+        <meta name="description" content="commonmark.js で Markdown を変換する">
+        <meta name="viewport" content="initial-scale=1, width=device-width">
+        <script src="node_modules/commonmark/dist/commonmark.min.js" defer></script>
+        <script type="module" defer>
+            import FuzzyGiggle from "./fuzzy-giggle.js";
+            window.addEventListener(
+                "click",
+                event => {
+                    for (const button of document.querySelectorAll(".lfg-js [name='copy'][data-for]")) {
+                        if (!button.contains(event.target) && !Object.is(event.target, button)) {
+                            continue;
+                        }
+                        for (const output of document.querySelectorAll(".lfg-js [name='output_" + button.dataset.for + "']")) {
+                            const input = document.createElement("textarea");
+                            input.value = output.value;
+                            document.body.append(input);
+                            input.select();
+                            document.execCommand("copy");
+                            input.remove();
+                        }
+                        return;
+                    }
+                    for (const input of document.querySelectorAll(".lfg-js [name^='input_from_']:enabled")) {
+                        if (!input.contains(event.target) && !Object.is(event.target, input)) {
+                            continue;
+                        }
+                        for (const radio of document.querySelectorAll(".lfg-js [name='input_from'][value='" + input.name.substring(("input_from_").length) + "']:enabled")) {
+                            radio.click();
+                        }
+                        return;
+                    }
+                },
+            );
+            window.addEventListener(
+                "load",
+                () => {
+                    const giggle = new FuzzyGiggle(commonmark);
+                    const inputFrom = {
+                        text: form => {
+                            for (const input of form.querySelectorAll("[name='input_from_text']")) {
+                                read(input.value, form);
+                            }
+                        },
+                        file: async form => {
+                            for (const input of form.querySelectorAll("[name='input_from_file']")) {
+                                let filenames = "";
+                                let markdown = "";
+                                for (const file of input.files) {
+                                    filenames += file.name + "\n";
+                                    markdown += (await file.text()) + "\n\n";
+                                }
+                                for (const output of form.querySelectorAll("[name='filenames']")) {
+                                    output.value = filenames;
+                                }
+                                read(markdown, form);
+                            }
+                        },
+                    };
+                    const writers = {
+                        html: {writer: commonmark.HtmlRenderer, mimeType: "text/html"},
+                        xml: {writer: commonmark.XmlRenderer, mimeType: "application/xml"},
+                        text: {writer: giggle.TextRenderer},
+                        pixiv: {writer: giggle.PixivNovelRenderer},
+                    };
+                    for (const k in writers) {
+                        writers[k].mimeType = "mimeType" in writers[k] ? writers[k].mimeType : "text/plain";
+                    }
+                    const read = (markdown, form) => {
+                        const reader = new commonmark.Parser();
+                        const parsed = reader.parse(markdown);
+                        for (const k in writers) {
+                            const writer = new writers[k].writer();
+                            const result = writer.render(parsed);
+                            for (const output of form.querySelectorAll("[name='output_" + k + "']")) {
+                                output.value = result;
+                            }
+                            const url = URL.createObjectURL(new Blob([result]), {type: writers[k].mimeType});
+                            for (const download of document.querySelectorAll(".lfg-js__download[data-for='" + k + "']")) {
+                                download.href = url;
+                            }
+                        }
+                    };
+                    const rename = basename => {
+                        for (const k in writers) {
+                            let extension = "txt";
+                            switch (writers[k].mimeType) {
+                                case "text/html" : extension = "html";
+                                    break;
+                                case "application/xml" : extension = "xml";
+                                    break;
+                            }
+                            extension = extension === k ? "" : "." + extension;
+                            for (const download of document.querySelectorAll(".lfg-js__download[data-for='" + k + "']")) {
+                                download.download = basename + "." + k + extension;
+                            }
+                        }
+                    };
+                    for (const form of document.getElementsByClassName("lfg-js")) {
+                        for (const radio of form.querySelectorAll("[name='input_from']")) {
+                            radio.addEventListener("change", () => inputFrom[radio.value](form));
+                            if (radio.checked) {
+                                inputFrom[radio.value](form);
+                            }
+                        }
+                        for (const input of form.querySelectorAll("[name^='input_from_']")) {
+                            input.addEventListener(
+                                "input", () => {
+                                    const value = input.name.replace(/^input_from_/u, "");
+                                    if (!!form.querySelector("[name='input_from'][value='" + value + "']:checked")) {
+                                        inputFrom[value](form);
+                                    }
+                                },
+                            );
+                        }
+                        for (const input of form.querySelectorAll("[name='input_basename']")) {
+                            input.addEventListener("input", () => rename(input.value));
+                            rename(input.value);
+                        }
+                    }
+                },
+            );
+        </script>
+        <style>
+            :root {
+                /* #1B1726 */
+                --lvf-color-dark--h: 256;
+                --lvf-color-dark--s: 25%;
+                --lvf-color-dark--l: 12%;
+                /* #dd595a */
+                --lvf-color-light--h: 360;
+                --lvf-color-light--s: 66%;
+                --lvf-color-light--l: 61%;
+            }
+            .lfg-css-hidden {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <h1 class="lvf-card">
+            <span class="lvf-card__content">
+                <span class="lvf-card__primary-title">
+                    <span class="lvf-typography-headline5">
+                        <a href="https://github.com/lawrelie/fuzzy-giggle.js">fuzzy-giggle.js</a>
+                    </span>
+                </span>
+            </span>
+        </h1>
+        <div class="lfg-js">
+            <section>
+                <h2 class="lvf-subheader"><span class="lvf-typography-subtitle2">Markdown を入力する</span></h2>
+                <ul class="lvf-form">
+                    <li class="lvf-form__item">
+                        <label class="lfg-css-hidden">
+                            <input name="input_from" type="radio" form="lfg-form" value="text" checked>
+                            文章を入力する：
+                        </label>
+                        <textarea name="input_from_text" aria-label="Text" rows="4" cols="30"></textarea>
+                    </li>
+                    <li class="lvf-form__item">
+                        <div class="lvf-radio">
+                            <div class="lvf-form">
+                                <div class="lvf-form__item">
+                                    <input name="input_from" type="radio" form="lfg-form" value="file">
+                                </div>
+                            </div>
+                            <div>
+                                <div class="lvf-form">
+                                    <div class="lvf-form__item">
+                                        <label class="lvf-dropzone">
+                                            <span class="lvf-dropzone__content">又はファイルを参照する</span>
+                                            <input class="lvf-dropzone__input" name="input_from_file" type="file" accept="text/markdown, .md, .markdown" multiple>
+                                        </label>
+                                    </div>
+                                    <div class="lvf-form__item"><output name="filenames"></output></div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+            <section class="lvf-form" aria-label="Basename">
+                <label class="lvf-form__item">
+                    <span class="lvf-field-label">ダウンロードするファイルの名前</span>
+                    <input name="input_basename" value="by-fuzzy-giggle" size="20">
+                </label>
+            </section>
+            <section>
+                <h2 class="lvf-subheader"><span class="lvf-typography-subtitle2">変換結果</span></h2>
+                <ul class="lvf-form">
+                    <li class="lvf-form__item">
+                        <div class="lvf-form">
+                            <label class="lvf-form__item">
+                                HTML
+                                <output name="output_html"></output>
+                            </label>
+                            <div class="lvf-form__item"><button name="copy" type="button" data-for="html">コピー</button></div>
+                            <div class="lvf-form__item"><a class="lvf-button lfg-js__download" data-for="html"><span class="lvf-button__label">ダウンロード</span></a></div>
+                        </div>
+                    </li>
+                    <li class="lvf-form__item">
+                        <div class="lvf-form">
+                            <label class="lvf-form__item">
+                                XML
+                                <output name="output_xml"></output>
+                            </label>
+                            <div class="lvf-form__item"><button name="copy" type="button" data-for="xml">コピー</button></div>
+                            <div class="lvf-form__item"><a class="lvf-button lfg-js__download" data-for="xml"><span class="lvf-button__label">ダウンロード</span></a></div>
+                        </div>
+                    </li>
+                    <li class="lvf-form__item">
+                        <div class="lvf-form">
+                            <label class="lvf-form__item">
+                                プレーンテキスト
+                                <output name="output_text"></output>
+                            </label>
+                            <div class="lvf-form__item"><button name="copy" type="button" data-for="text">コピー</button></div>
+                            <div class="lvf-form__item"><a class="lvf-button lfg-js__download" data-for="text"><span class="lvf-button__label">ダウンロード</span></a></div>
+                        </div>
+                    </li>
+                    <li class="lvf-form__item">
+                        <div class="lvf-form">
+                            <label class="lvf-form__item">
+                                pixiv（小説）
+                                <output name="output_pixiv"></output>
+                            </label>
+                            <div class="lvf-form__item"><button name="copy" type="button" data-for="pixiv">コピー</button></div>
+                            <div class="lvf-form__item"><a class="lvf-button lfg-js__download" data-for="pixiv"><span class="lvf-button__label">ダウンロード</span></a></div>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+        </div>
+        <form id="lfg-form"></form>
+    </body>
+</html>
