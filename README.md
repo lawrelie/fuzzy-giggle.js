@@ -1,5 +1,5 @@
 # fuzzy-giggle.js
-[commonmark.js](https://github.com/commonmark/commonmark.js) で Markdown を変換する。
+[commonmark.js](https://github.com/commonmark/commonmark.js) で Markdown を変換する
 
 ```js
 import commonmark from "path/to/commonmark.js";
