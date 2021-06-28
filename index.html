@@ -200,48 +200,40 @@
             </section>
             <section>
                 <h2 class="lvf-subheader"><span class="lvf-typography-subtitle2">変換結果</span></h2>
-                <ul class="lvf-form">
-                    <li class="lvf-form__item">
-                        <div class="lvf-form">
-                            <label class="lvf-form__item">
-                                HTML
-                                <output name="output_html"></output>
-                            </label>
-                            <div class="lvf-form__item"><button name="copy" type="button" data-for="html">コピー</button></div>
-                            <div class="lvf-form__item"><a class="lvf-button lfg-js__download" data-for="html"><span class="lvf-button__label">ダウンロード</span></a></div>
-                        </div>
-                    </li>
-                    <li class="lvf-form__item">
-                        <div class="lvf-form">
-                            <label class="lvf-form__item">
-                                XML
-                                <output name="output_xml"></output>
-                            </label>
-                            <div class="lvf-form__item"><button name="copy" type="button" data-for="xml">コピー</button></div>
-                            <div class="lvf-form__item"><a class="lvf-button lfg-js__download" data-for="xml"><span class="lvf-button__label">ダウンロード</span></a></div>
-                        </div>
-                    </li>
-                    <li class="lvf-form__item">
-                        <div class="lvf-form">
-                            <label class="lvf-form__item">
-                                プレーンテキスト
-                                <output name="output_text"></output>
-                            </label>
-                            <div class="lvf-form__item"><button name="copy" type="button" data-for="text">コピー</button></div>
-                            <div class="lvf-form__item"><a class="lvf-button lfg-js__download" data-for="text"><span class="lvf-button__label">ダウンロード</span></a></div>
-                        </div>
-                    </li>
-                    <li class="lvf-form__item">
-                        <div class="lvf-form">
-                            <label class="lvf-form__item">
-                                pixiv（小説）
-                                <output name="output_pixiv"></output>
-                            </label>
-                            <div class="lvf-form__item"><button name="copy" type="button" data-for="pixiv">コピー</button></div>
-                            <div class="lvf-form__item"><a class="lvf-button lfg-js__download" data-for="pixiv"><span class="lvf-button__label">ダウンロード</span></a></div>
-                        </div>
-                    </li>
-                </ul>
+                <div class="lvf-layout-grid">
+                    <div class="lvf-form">
+                        <label class="lvf-form__item">
+                            HTML
+                            <output name="output_html"></output>
+                        </label>
+                        <div class="lvf-form__item"><button name="copy" type="button" data-for="html">コピー</button></div>
+                        <div class="lvf-form__item"><a class="lvf-button lfg-js__download" data-for="html"><span class="lvf-button__label">ダウンロード</span></a></div>
+                    </div>
+                    <div class="lvf-form">
+                        <label class="lvf-form__item">
+                            XML
+                            <output name="output_xml"></output>
+                        </label>
+                        <div class="lvf-form__item"><button name="copy" type="button" data-for="xml">コピー</button></div>
+                        <div class="lvf-form__item"><a class="lvf-button lfg-js__download" data-for="xml"><span class="lvf-button__label">ダウンロード</span></a></div>
+                    </div>
+                    <div class="lvf-form">
+                        <label class="lvf-form__item">
+                            プレーンテキスト
+                            <output name="output_text"></output>
+                        </label>
+                        <div class="lvf-form__item"><button name="copy" type="button" data-for="text">コピー</button></div>
+                        <div class="lvf-form__item"><a class="lvf-button lfg-js__download" data-for="text"><span class="lvf-button__label">ダウンロード</span></a></div>
+                    </div>
+                    <div class="lvf-form">
+                        <label class="lvf-form__item">
+                            pixiv（小説）
+                            <output name="output_pixiv"></output>
+                        </label>
+                        <div class="lvf-form__item"><button name="copy" type="button" data-for="pixiv">コピー</button></div>
+                        <div class="lvf-form__item"><a class="lvf-button lfg-js__download" data-for="pixiv"><span class="lvf-button__label">ダウンロード</span></a></div>
+                    </div>
+                </div>
             </section>
         </div>
         <form id="lfg-form"></form>
