@@ -31,7 +31,11 @@ export default class {
             }
             html_inline(node) {
                 if (!this.options.safe) {
-                    this.lit(node.literal);
+                    return;
+                } else if (/^<rt(?=\s|>)/iu.test(node.literal)) {
+                    this.out("（");
+                } else if (/^<\/rt(?=\s|>)/iu.test(node.literal)) {
+                    this.out("）");
                 }
             }
             link(node, entering) {
@@ -131,10 +135,6 @@ export default class {
             }
             html_block(node) {
                 this.cr(2);
-                if (!this.options.safe) {
-                    this.lit(node.literal);
-                }
-                this.cr(2);
             }
             themantic_break(node) {
                 this.cr(2);
@@ -175,6 +175,21 @@ export default class {
                     }
                     super.heading(node, entering);
                 }
+            }
+            html_inline(node) {
+                if (/^<ruby(?=\s|>)/iu.test(node.literal)) {
+                    return this.out("[[rb:");
+                } else if (/^<\/ruby(?=\s|>)/iu.test(node.literal)) {
+                    return this.out("]]");
+                } else if (/^<rt(?=\s|>)/iu.test(node.literal)) {
+                    return this.out(" > ");
+                } else if (/^<\/rt(?=\s|>)/iu.test(node.literal)) {
+                    if (!/^<\/ruby(?=\s|>)/iu.test(node.next.literal)) {
+                        this.out("]][[rb:");
+                    }
+                    return;
+                }
+                super.html_inline(node);
             }
         };
     }
