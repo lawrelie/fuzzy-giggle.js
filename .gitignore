@@ -1,2 +1,9 @@
 package-lock.json
-/src/*
+/src/node_modules/*
+!/src/node_modules/commonmark
+/src/node_modules/commonmark/*
+!/src/node_modules/commonmark/dist
+/src/node_modules/commonmark/dist/*
+!/src/node_modules/commonmark/dist/commonmark.min.js
+!/src/node_modules/commonmark/LICENSE
+!/src/node_modules/commonmark/README.md
