@@ -113,6 +113,12 @@ export default class {
                 } catch (e) {}
                 if (entering) {
                     this.out(listType);
+                    try {
+                        if ("list" === node.firstChild.type) {
+                            throw new Error;
+                        }
+                        this.out("　");
+                    } catch (e) {}
                 } else {
                     this.cr();
                 }
